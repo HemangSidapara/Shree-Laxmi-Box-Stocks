@@ -26,6 +26,7 @@ class CreateOrderView extends GetView<CreateOrderController> {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h).copyWith(top: 0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ///Header
                 CustomHeaderWidget(
@@ -573,11 +574,14 @@ class CreateOrderView extends GetView<CreateOrderController> {
                             validator: controller.validateDeliveryDate,
                             readOnly: true,
                             onTap: () async {
+                              final initialDate = controller.deliveryDateController.text.trim().isEmpty ? DateTime.now() : DateFormat("dd/MM/yyyy").parse(controller.deliveryDateController.text.trim());
+
                               final selectedDate = await showDatePicker(
                                 context: context,
                                 firstDate: DateTime(1970),
                                 lastDate: DateTime(2050),
-                                initialDate: DateTime.now(),
+                                initialDate: initialDate,
+                                confirmText: AppStrings.select.tr,
                               );
 
                               if (selectedDate != null) {
@@ -715,6 +719,7 @@ class CreateOrderView extends GetView<CreateOrderController> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      ///Back
                       IconButton(
                         onPressed: () {
                           Get.back();
@@ -736,6 +741,8 @@ class CreateOrderView extends GetView<CreateOrderController> {
                           fontSize: 18.sp,
                         ),
                       ),
+
+                      ///Save
                       TextButton(
                         onPressed: () {
                           Get.back();
@@ -761,6 +768,7 @@ class CreateOrderView extends GetView<CreateOrderController> {
                 ),
                 SizedBox(height: 2.h),
 
+                ///Add new party
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 5.w),
                   child: Form(
@@ -785,7 +793,10 @@ class CreateOrderView extends GetView<CreateOrderController> {
                           ),
                           SizedBox(width: 1.w),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Get.back();
+                              controller.partyNameController.text = addPartyController.text.trim();
+                            },
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.only(

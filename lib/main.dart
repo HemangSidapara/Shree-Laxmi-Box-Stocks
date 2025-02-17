@@ -44,7 +44,74 @@ class _MyAppState extends State<MyApp> {
             scaffoldBackgroundColor: AppColors.SECONDARY_COLOR,
             primaryColor: AppColors.PRIMARY_COLOR,
             textTheme: GoogleFonts.nunitoSansTextTheme(),
-            datePickerTheme: DatePickerThemeData(headerBackgroundColor: AppColors.SECONDARY_COLOR),
+            colorScheme: ColorScheme.light(
+              onPrimary: AppColors.PRIMARY_COLOR,
+              primary: AppColors.DARK_GREEN_COLOR,
+            ),
+            datePickerTheme: DatePickerThemeData(
+              backgroundColor: AppColors.PRIMARY_COLOR,
+              headerBackgroundColor: AppColors.SECONDARY_COLOR,
+              dividerColor: AppColors.HINT_GREY_COLOR,
+              headerForegroundColor: AppColors.PRIMARY_COLOR,
+              headerHelpStyle: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w500,
+              ),
+              headerHeadlineStyle: TextStyle(
+                color: AppColors.PRIMARY_COLOR,
+                fontSize: 20.sp,
+                fontWeight: FontWeight.w600,
+              ),
+              cancelButtonStyle: ButtonStyle(
+                foregroundColor: WidgetStatePropertyAll<Color>(AppColors.DARK_RED_COLOR),
+                textStyle: WidgetStatePropertyAll<TextStyle>(
+                  TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              confirmButtonStyle: ButtonStyle(
+                foregroundColor: WidgetStatePropertyAll<Color>(AppColors.DARK_GREEN_COLOR),
+                textStyle: WidgetStatePropertyAll<TextStyle>(
+                  TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              dayForegroundColor: WidgetStatePropertyAll<Color>(AppColors.SECONDARY_COLOR),
+              dayStyle: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w600,
+              ),
+              todayBorder: BorderSide(color: AppColors.DARK_GREEN_COLOR),
+              surfaceTintColor: AppColors.DARK_GREEN_COLOR,
+              yearStyle: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+              ),
+              elevation: 4,
+              weekdayStyle: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500,
+              ),
+              inputDecorationTheme: InputDecorationTheme(
+                labelStyle: TextStyle(
+                  color: AppColors.SECONDARY_COLOR,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: AppColors.SECONDARY_COLOR,
+                  ),
+                ),
+                outlineBorder: BorderSide(
+                  color: AppColors.SECONDARY_COLOR,
+                ),
+              ),
+            ),
             useMaterial3: true,
             textSelectionTheme: TextSelectionThemeData(
               cursorColor: AppColors.SECONDARY_COLOR,

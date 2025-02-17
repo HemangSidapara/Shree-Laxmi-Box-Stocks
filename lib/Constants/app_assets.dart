@@ -6,6 +6,7 @@ class AppAssets {
   static const String recycleBinAnim = "assets/animations/recycle_bin.gif";
   static const String notesAnim = "assets/animations/notes.gif";
   static const String splashAnim = "assets/animations/splash_animation.json";
+  static const String splashNoPaddingAnim = "assets/animations/splash_no_padding_animation.json";
 
   ///Images
   static const String loginImage = "assets/images/login_image.png";
