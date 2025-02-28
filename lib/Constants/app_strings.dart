@@ -35,9 +35,9 @@ class AppStrings {
   static const String save = "Save";
   static const String pendingOrders = "Pending Orders";
   static const String partyName = "Party Name";
-  static const String enterPartyName = "Enter party name";
   static const String pleaseEnterPartyName = "Please enter party name";
   static const String pleaseSelectParty = "Please select party";
+  static const String enterPartyName = "Enter party name";
   static const String partyPhone = "Party Phone";
   static const String enterPartyPhone = "Enter party phone";
   static const String partyEmail = "Party Email";
@@ -90,4 +90,8 @@ class AppStrings {
   static const String deliveryDate = "Delivery Date";
   static const String selectDeliveryDate = "Select delivery date";
   static const String pleaseSelectDeliveryDate = "Please select delivery date";
+  static const String searchParty = "Search party";
+  static const String editParty = "Edit party";
+  static const String editPartyName = "Edit party name";
+  static const String editPhoneNumber = "Edit phone number";
 }

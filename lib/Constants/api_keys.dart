@@ -22,4 +22,5 @@ class ApiKeys {
   static const blockSize = "blockSize";
   static const blockQuantity = "blockQuantity";
   static const deliveryDate = "deliveryDate";
+  static const partyId = "partyId";
 }

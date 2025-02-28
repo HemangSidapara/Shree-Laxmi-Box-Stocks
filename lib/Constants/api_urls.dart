@@ -4,7 +4,10 @@ class ApiUrls {
 
   /// Users Urls
   static const String loginApi = '${_apiPath}users/login';
+  static const String getPartiesApi = '${_apiPath}users/getParties';
+  static const String editPartyApi = '${_apiPath}users/editParty';
 
   /// Orders Urls
   static const String createOrderApi = '${_apiPath}orders/createOrder';
+  static const String getOrdersApi = '${_apiPath}orders/getOrders';
 }

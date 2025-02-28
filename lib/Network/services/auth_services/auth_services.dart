@@ -18,17 +18,20 @@ class AuthServices {
       "",
       showProgress: false,
       onError: (dioExceptions) {
+        if (kDebugMode) {
+          print("❌ inAppUpdateApi OnError: ${dioExceptions.message}");
+        }
         Utils.handleMessage(message: dioExceptions.message, isError: true);
       },
       onSuccess: (res) async {
         if (res.isSuccess) {
           GetLatestVersionModel latestVersionModel = GetLatestVersionModel.fromJson(res.response?.data);
           if (kDebugMode) {
-            print("inAppUpdateApi success :: ${latestVersionModel.msg}");
+            print("✅ inAppUpdateApi Success: ${res.message}");
           }
         } else {
           if (kDebugMode) {
-            print("inAppUpdateApi error :: ${res.message}");
+            print("❌ inAppUpdateApi Error: ${res.message}");
           }
         }
       },
@@ -49,6 +52,9 @@ class AuthServices {
       ApiUrls.loginApi,
       params: params,
       onError: (dioExceptions) {
+        if (kDebugMode) {
+          print("❌ loginApi OnError: ${dioExceptions.message}");
+        }
         Utils.handleMessage(message: dioExceptions.message, isError: true);
       },
       onSuccess: (res) async {
@@ -58,12 +64,12 @@ class AuthServices {
           await setData(AppConstance.role, loginModel.data?.role);
           await setData(AppConstance.userName, loginModel.data?.userName);
           if (kDebugMode) {
-            print("loginApi success :: ${loginModel.message}");
+            print("✅ loginApi Success: ${res.message}");
           }
           Utils.handleMessage(message: loginModel.message);
         } else {
           if (kDebugMode) {
-            print("loginApi error :: ${res.message}");
+            print("❌ loginApi Error: ${res.message}");
           }
           Utils.handleMessage(message: res.message, isError: true);
         }
@@ -77,24 +83,27 @@ class AuthServices {
     final response = await ApiBaseHelper.getHTTP(
       "",
       onError: (dioExceptions) {
+        if (kDebugMode) {
+          print("❌ checkTokenApi OnError: ${dioExceptions.message}");
+        }
         Utils.handleMessage(message: dioExceptions.message, isError: true);
       },
       showProgress: false,
       onSuccess: (res) async {
         if (res.isSuccess) {
           if (kDebugMode) {
-            print("checkTokenApi success :: ${res.message}");
+            print("✅ checkTokenApi Success: ${res.message}");
           }
         } else if (res.statusCode == 498) {
           if (kDebugMode) {
-            print("checkTokenApi error :: ${res.message}");
+            print("❌ checkTokenApi Error: ${res.message}");
           }
           Get.offAllNamed(Routes.signInScreen);
           Utils.handleMessage(message: AppStrings.sessionExpire.tr, isError: true);
           clearData();
         } else {
           if (kDebugMode) {
-            print("checkTokenApi error :: ${res.message}");
+            print("❌ checkTokenApi Error: ${res.message}");
           }
           Utils.handleMessage(message: res.message, isError: true);
         }

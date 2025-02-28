@@ -32,6 +32,8 @@ class TextFieldWidget extends StatefulWidget {
   final int? maxLines;
   final int? minLines;
   final BorderRadius? borderRadius;
+  final List<Widget>? titleChildren;
+  final MainAxisAlignment? titleChildrenMainAxisAlignment;
 
   const TextFieldWidget({
     super.key,
@@ -62,6 +64,8 @@ class TextFieldWidget extends StatefulWidget {
     this.maxLines = 1,
     this.minLines = 1,
     this.borderRadius,
+    this.titleChildren,
+    this.titleChildrenMainAxisAlignment,
   });
 
   @override
@@ -77,16 +81,26 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.title != null) ...[
-            Padding(
-              padding: EdgeInsets.only(left: context.isPortrait ? 2.w : 1.w),
-              child: Text(
-                widget.title!,
-                style: TextStyle(
-                  color: widget.primaryColor ?? AppColors.PRIMARY_COLOR,
-                  fontSize: context.isPortrait ? 16.sp : 12.sp,
-                  fontWeight: FontWeight.w600,
+            Row(
+              mainAxisAlignment: widget.titleChildrenMainAxisAlignment ?? MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: context.isPortrait ? 2.w : 1.w),
+                  child: Text(
+                    widget.title!,
+                    style: TextStyle(
+                      color: widget.primaryColor ?? AppColors.PRIMARY_COLOR,
+                      fontSize: context.isPortrait ? 16.sp : 12.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-              ),
+                if (widget.titleChildren != null) ...[
+                  SizedBox(width: 2.w),
+                  ...widget.titleChildren!,
+                ],
+              ],
             ),
             SizedBox(height: 1.h),
           ],

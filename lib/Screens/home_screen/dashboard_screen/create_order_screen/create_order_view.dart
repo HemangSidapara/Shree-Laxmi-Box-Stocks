@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -9,8 +11,10 @@ import 'package:shree_laxmi_box_stocks/Constants/app_strings.dart';
 import 'package:shree_laxmi_box_stocks/Constants/app_styles.dart';
 import 'package:shree_laxmi_box_stocks/Constants/app_utils.dart';
 import 'package:shree_laxmi_box_stocks/Screens/home_screen/dashboard_screen/create_order_screen/create_order_controller.dart';
+import 'package:shree_laxmi_box_stocks/Widgets/animated_staggredlist_widget.dart';
 import 'package:shree_laxmi_box_stocks/Widgets/button_widget.dart';
 import 'package:shree_laxmi_box_stocks/Widgets/custom_header_widget.dart';
+import 'package:shree_laxmi_box_stocks/Widgets/loading_widget.dart';
 import 'package:shree_laxmi_box_stocks/Widgets/show_bottom_sheet_widget.dart';
 import 'package:shree_laxmi_box_stocks/Widgets/textfield_widget.dart';
 
@@ -46,18 +50,45 @@ class CreateOrderView extends GetView<CreateOrderController> {
                       child: Column(
                         children: [
                           ///Party Name
-                          TextFieldWidget(
-                            controller: controller.partyNameController,
-                            title: AppStrings.partyName.tr,
-                            hintText: AppStrings.selectPartyName.tr,
-                            validator: controller.validatePartyList,
-                            textInputAction: TextInputAction.next,
-                            maxLength: 50,
-                            readOnly: true,
-                            onTap: () {
-                              showBottomSheetPartyName();
-                            },
-                          ),
+                          Obx(() {
+                            return TextFieldWidget(
+                              controller: controller.partyNameController,
+                              title: AppStrings.partyName.tr,
+                              hintText: AppStrings.selectPartyName.tr,
+                              validator: controller.validatePartyList,
+                              textInputAction: TextInputAction.next,
+                              maxLength: 50,
+                              readOnly: true,
+                              titleChildren: [
+                                AnimatedOpacity(
+                                  opacity: controller.selectedPartyId.value != -1 ? 1 : 0,
+                                  duration: const Duration(milliseconds: 300),
+                                  child: IconButton(
+                                    onPressed: () async {
+                                      await showBottomSheetPartyEdit();
+                                    },
+                                    style: IconButton.styleFrom(
+                                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      padding: EdgeInsets.zero,
+                                      alignment: Alignment.center,
+                                      maximumSize: Size(5.w, 5.w),
+                                      minimumSize: Size(5.w, 5.w),
+                                      surfaceTintColor: AppColors.WHITE_COLOR,
+                                      elevation: 4,
+                                    ),
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.penToSquare,
+                                      color: AppColors.WARNING_COLOR,
+                                      size: 5.w,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              onTap: () {
+                                showBottomSheetPartyName();
+                              },
+                            );
+                          }),
                           SizedBox(height: 2.h),
 
                           ///Party Phone
@@ -701,6 +732,18 @@ class CreateOrderView extends GetView<CreateOrderController> {
   Future<void> showBottomSheetPartyName() async {
     GlobalKey<FormState> addPartyFormKey = GlobalKey<FormState>();
     TextEditingController addPartyController = TextEditingController();
+
+    RxInt selectedPartyId = (controller.selectedPartyId.value).obs;
+
+    void getSearchParty(String value) {
+      controller.searchPartyList.clear();
+      if (value.isNotEmpty) {
+        controller.searchPartyList.addAll(controller.partyList.where((element) => element.partyName?.toLowerCase().contains(value.toLowerCase()) == true).toList());
+      } else {
+        controller.searchPartyList.addAll(controller.partyList);
+      }
+    }
+
     return showBottomSheetWidget(
       context: Get.context!,
       builder: (context) {
@@ -746,6 +789,11 @@ class CreateOrderView extends GetView<CreateOrderController> {
                       TextButton(
                         onPressed: () {
                           Get.back();
+                          if (selectedPartyId.value != -1) {
+                            controller.selectedPartyId.value = selectedPartyId.value;
+                            controller.partyNameController.text = controller.partyList.firstWhere((element) => element.partyId == selectedPartyId.value).partyName ?? "";
+                            controller.partyPhoneController.text = controller.partyList.firstWhere((element) => element.partyId == selectedPartyId.value).partyPhone ?? "";
+                          }
                         },
                         style: IconButton.styleFrom(
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -765,6 +813,20 @@ class CreateOrderView extends GetView<CreateOrderController> {
                 Divider(
                   color: AppColors.HINT_GREY_COLOR,
                   thickness: 1,
+                ),
+                SizedBox(height: 2.h),
+
+                ///Search Party
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 5.w),
+                  child: TextFieldWidget(
+                    hintText: AppStrings.searchParty,
+                    primaryColor: AppColors.MAIN_BORDER_COLOR.withValues(alpha: 0.2),
+                    secondaryColor: AppColors.SECONDARY_COLOR,
+                    onChanged: (value) {
+                      getSearchParty(value);
+                    },
+                  ),
                 ),
                 SizedBox(height: 2.h),
 
@@ -794,8 +856,11 @@ class CreateOrderView extends GetView<CreateOrderController> {
                           SizedBox(width: 1.w),
                           InkWell(
                             onTap: () {
-                              Get.back();
-                              controller.partyNameController.text = addPartyController.text.trim();
+                              if (addPartyFormKey.currentState?.validate() == true) {
+                                controller.partyNameController.text = addPartyController.text.trim();
+                                controller.selectedPartyId(-1);
+                                Get.back();
+                              }
                             },
                             child: DecoratedBox(
                               decoration: BoxDecoration(
@@ -820,8 +885,220 @@ class CreateOrderView extends GetView<CreateOrderController> {
                     ),
                   ),
                 ),
+                SizedBox(height: 2.h),
+
+                ///Parties
+                Flexible(
+                  child: Obx(() {
+                    if (controller.isGetPartiesLoading.isTrue) {
+                      return SizedBox(
+                        height: 20.h,
+                        child: Center(
+                          child: LoadingWidget(height: 5.h),
+                        ),
+                      );
+                    } else if (controller.searchPartyList.isEmpty) {
+                      return SizedBox(
+                        height: 20.h,
+                        child: Center(
+                          child: Text(
+                            AppStrings.noDataFound.tr,
+                            style: TextStyle(
+                              color: AppColors.BLACK_COLOR,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return AnimationLimiter(
+                        child: ListView.separated(
+                          itemCount: controller.searchPartyList.length,
+                          shrinkWrap: true,
+                          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
+                          itemBuilder: (context, index) {
+                            final party = controller.searchPartyList[index];
+                            return AnimatedStaggeredListWidget(
+                              index: index,
+                              onTap: () {
+                                selectedPartyId(party.partyId ?? -1);
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      party.partyName ?? "",
+                                      style: TextStyle(
+                                        color: AppColors.BLACK_COLOR,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16.sp,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 2.w),
+                                  Obx(() {
+                                    return AnimatedContainer(
+                                      duration: const Duration(milliseconds: 300),
+                                      decoration: BoxDecoration(
+                                        color: selectedPartyId.value == party.partyId ? AppColors.DARK_GREEN_COLOR : AppColors.WHITE_COLOR,
+                                        border: Border.all(
+                                          color: selectedPartyId.value == party.partyId ? AppColors.DARK_GREEN_COLOR : AppColors.GREY_COLOR,
+                                          width: 1,
+                                        ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      padding: EdgeInsets.all(1.w),
+                                      child: Icon(
+                                        Icons.check_rounded,
+                                        color: AppColors.WHITE_COLOR,
+                                        size: 3.w,
+                                      ),
+                                    );
+                                  }),
+                                ],
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return SizedBox(height: 1.5.h);
+                          },
+                        ),
+                      );
+                    }
+                  }),
+                ),
                 SizedBox(height: 5.h),
               ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> showBottomSheetPartyEdit() async {
+    GlobalKey<FormState> editPartyFormKey = GlobalKey<FormState>();
+    TextEditingController editPartyController = TextEditingController(text: controller.partyNameController.text.trim());
+    TextEditingController editPhoneNumberController = TextEditingController(text: controller.partyPhoneController.text.trim());
+
+    await showBottomSheetWidget(
+      context: Get.context!,
+      builder: (context) {
+        final keyboardPadding = MediaQuery.viewInsetsOf(context).bottom;
+        return GestureDetector(
+          onTap: Utils.unfocus,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(top: 1.h, bottom: keyboardPadding),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ///Back, Title & Save
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Get.back();
+                          },
+                          style: IconButton.styleFrom(
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: AppColors.SECONDARY_COLOR,
+                            size: 6.w,
+                          ),
+                        ),
+                        Text(
+                          AppStrings.editParty.tr,
+                          style: TextStyle(
+                            color: AppColors.SECONDARY_COLOR,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 18.sp,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            if (controller.selectedPartyId.value != -1) {
+                              await controller.checkEditParty(
+                                partyId: controller.selectedPartyId.value.toString(),
+                                partyName: editPartyController.text.trim(),
+                                partyPhone: editPhoneNumberController.text.trim(),
+                              );
+                            }
+                          },
+                          style: IconButton.styleFrom(
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: controller.isGetPartiesLoading.isTrue
+                              ? LoadingWidget()
+                              : Text(
+                                  AppStrings.save.tr,
+                                  style: TextStyle(
+                                    color: AppColors.DARK_GREEN_COLOR,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    child: Divider(
+                      color: AppColors.HINT_GREY_COLOR,
+                      thickness: 1,
+                    ),
+                  ),
+
+                  ///Edit party
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    child: Form(
+                      key: editPartyFormKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ///Party Name
+                          TextFieldWidget(
+                            controller: editPartyController,
+                            title: AppStrings.editPartyName.tr,
+                            hintText: AppStrings.enterPartyName.tr,
+                            validator: controller.validatePartyName,
+                            primaryColor: AppColors.SECONDARY_COLOR,
+                            secondaryColor: AppColors.PRIMARY_COLOR,
+                            maxLength: 30,
+                            textInputAction: TextInputAction.next,
+                          ),
+
+                          ///Phone number
+                          TextFieldWidget(
+                            controller: editPhoneNumberController,
+                            title: AppStrings.editPhoneNumber.tr,
+                            hintText: AppStrings.enterPhoneNumber.tr,
+                            validator: controller.validatePartyPhone,
+                            primaryColor: AppColors.SECONDARY_COLOR,
+                            secondaryColor: AppColors.PRIMARY_COLOR,
+                            maxLength: 10,
+                            keyboardType: TextInputType.number,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5.h),
+                ],
+              ),
             ),
           ),
         );

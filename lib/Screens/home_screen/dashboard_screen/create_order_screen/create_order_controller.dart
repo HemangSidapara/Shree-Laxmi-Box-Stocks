@@ -53,9 +53,16 @@ class CreateOrderController extends GetxController {
   TextEditingController deliveryDateController = TextEditingController();
 
   RxBool isGetPartiesLoading = true.obs;
-  RxList<get_parties.Data> partyList = RxList();
-  RxInt selectedParty = (-1).obs;
+  RxList<get_parties.PartyData> partyList = RxList();
+  RxList<get_parties.PartyData> searchPartyList = RxList();
+  RxInt selectedPartyId = (-1).obs;
   RxBool isCreateOrderLoading = false.obs;
+
+  @override
+  void onInit() async {
+    super.onInit();
+    await getPartiesApi();
+  }
 
   String? validatePartyName(String? value) {
     if (value == null || value.isEmpty == true) {
@@ -131,16 +138,43 @@ class CreateOrderController extends GetxController {
     return null;
   }
 
-  Future<RxList<get_parties.Data>> getPartiesApi() async {
+  Future<RxList<get_parties.PartyData>> getPartiesApi() async {
     try {
       isGetPartiesLoading(true);
       final response = await OrderServices.getPartiesService();
       if (response.isSuccess) {
         get_parties.GetPartiesModel getPartiesModel = get_parties.GetPartiesModel.fromJson(response.response?.data);
         partyList.clear();
+        searchPartyList.clear();
         partyList.addAll(getPartiesModel.data ?? []);
+        searchPartyList.addAll(getPartiesModel.data ?? []);
       }
       return partyList;
+    } finally {
+      isGetPartiesLoading(false);
+    }
+  }
+
+  Future<void> checkEditParty({
+    required String partyId,
+    required String partyName,
+    required String partyPhone,
+  }) async {
+    try {
+      isGetPartiesLoading(true);
+      final response = await OrderServices.editPartyService(
+        partyId: partyId,
+        partyName: partyName,
+        partyPhone: partyPhone,
+      );
+
+      if (response.isSuccess) {
+        await getPartiesApi();
+        partyNameController.text = partyName;
+        partyPhoneController.text = partyPhone;
+        Get.back();
+        Utils.handleMessage(message: response.message);
+      }
     } finally {
       isGetPartiesLoading(false);
     }

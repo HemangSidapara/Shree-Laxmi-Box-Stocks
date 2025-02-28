@@ -85,7 +85,7 @@ class HomeView extends GetView<HomeController> {
                 return Image.asset(
                   iconName,
                   width: iconSize ?? 8.w,
-                  color: controller.bottomIndex.value == index ? AppColors.TERTIARY_COLOR : AppColors.WHITE_COLOR,
+                  color: controller.bottomIndex.value == index ? AppColors.AMBER_GOLD_COLOR : AppColors.WHITE_COLOR,
                 );
               }),
             ],

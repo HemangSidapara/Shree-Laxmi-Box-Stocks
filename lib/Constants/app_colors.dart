@@ -33,4 +33,5 @@ class AppColors {
   static Color ROSEGOLD_COLOR = const Color(0xffb76e79);
   static Color GREY_COLOR = const Color(0xff808080);
   static Color BRONZE_COLOR = const Color(0xffCD7F32);
+  static Color AMBER_GOLD_COLOR = const Color(0xffFDC107);
 }

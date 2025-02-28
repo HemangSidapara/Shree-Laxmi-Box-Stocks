@@ -9,19 +9,22 @@ class OrderServices {
   /// Get Parties
   static Future<ResponseModel> getPartiesService() async {
     final response = await ApiBaseHelper.getHTTP(
-      "",
+      ApiUrls.getPartiesApi,
       showProgress: false,
       onError: (dioExceptions) {
+        if (kDebugMode) {
+          print("❌ getPartiesApi OnError: ${dioExceptions.message}");
+        }
         Utils.handleMessage(message: dioExceptions.message, isError: true);
       },
       onSuccess: (res) {
         if (res.isSuccess) {
           if (kDebugMode) {
-            print("getPartiesApi success :: ${res.message}");
+            print("✅ getPartiesApi Success: ${res.message}");
           }
         } else {
           if (kDebugMode) {
-            print("getPartiesApi error :: ${res.message}");
+            print("❌ getPartiesApi Error: ${res.message}");
           }
           Utils.handleMessage(message: res.message, isError: true);
         }
@@ -78,16 +81,84 @@ class OrderServices {
       params: params,
       showProgress: false,
       onError: (dioExceptions) {
+        if (kDebugMode) {
+          print("❌ createOrderApi OnError: ${dioExceptions.message}");
+        }
         Utils.handleMessage(message: dioExceptions.message, isError: true);
       },
       onSuccess: (res) {
         if (res.isSuccess) {
           if (kDebugMode) {
-            print("createOrderApi success :: ${res.message}");
+            print("✅ createOrderApi Success: ${res.message}");
           }
         } else {
           if (kDebugMode) {
-            print("createOrderApi error :: ${res.message}");
+            print("❌ createOrderApi Error: ${res.message}");
+          }
+          Utils.handleMessage(message: res.message, isError: true);
+        }
+      },
+    );
+    return response;
+  }
+
+  /// Edit Party Service
+  static Future<ResponseModel> editPartyService({
+    required String partyId,
+    required String partyName,
+    required String partyPhone,
+  }) async {
+    final params = {
+      ApiKeys.partyId: partyId,
+      ApiKeys.partyName: partyName,
+      ApiKeys.partyPhone: partyPhone,
+    };
+    final response = await ApiBaseHelper.postHTTP(
+      ApiUrls.editPartyApi,
+      params: params,
+      showProgress: false,
+      onError: (dioExceptions) {
+        if (kDebugMode) {
+          print("❌ editPartyApi OnError: ${dioExceptions.message}");
+        }
+        Utils.handleMessage(message: dioExceptions.message, isError: true);
+      },
+      onSuccess: (res) async {
+        if (res.isSuccess) {
+          if (kDebugMode) {
+            print("✅ editPartyApi Success: ${res.message}");
+          }
+        } else {
+          if (kDebugMode) {
+            print("❌ editPartyApi Error: ${res.message}");
+          }
+          Utils.handleMessage(message: res.message, isError: true);
+        }
+      },
+    );
+
+    return response;
+  }
+
+  /// Get Orders
+  static Future<ResponseModel> getOrdersService() async {
+    final response = await ApiBaseHelper.getHTTP(
+      ApiUrls.getOrdersApi,
+      showProgress: false,
+      onError: (dioExceptions) {
+        if (kDebugMode) {
+          print("❌ getOrdersApi OnError: ${dioExceptions.message}");
+        }
+        Utils.handleMessage(message: dioExceptions.message, isError: true);
+      },
+      onSuccess: (res) {
+        if (res.isSuccess) {
+          if (kDebugMode) {
+            print("✅ getOrdersApi Success: ${res.message}");
+          }
+        } else {
+          if (kDebugMode) {
+            print("❌ getOrdersApi Error: ${res.message}");
           }
           Utils.handleMessage(message: res.message, isError: true);
         }
