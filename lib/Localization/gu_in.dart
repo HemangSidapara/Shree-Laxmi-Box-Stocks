@@ -90,4 +90,11 @@ Map<String, String> guIN = <String, String>{
   AppStrings.editParty: "સંપાદન પાર્ટી",
   AppStrings.editPartyName: "પાર્ટીનું નામ સંપાદિત કરો",
   AppStrings.editPhoneNumber: "ફોન નંબર સંપાદિત કરો",
+  AppStrings.editEmail: "ઇમેઇલ સંપાદિત કરો",
+  AppStrings.orderNumber: "ઓર્ડર નંબર",
+  AppStrings.size: "માપ",
+  AppStrings.quantity: "જથ્થો",
+  AppStrings.sleeperPatiya: "સ્લીપર પટિયા: ",
+  AppStrings.ghodiPatiya: "ઘોડી પટિયા: ",
+  AppStrings.block: "બ્લોક: ",
 };

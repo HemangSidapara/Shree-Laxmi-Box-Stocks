@@ -91,7 +91,14 @@ class AppStrings {
   static const String selectDeliveryDate = "Select delivery date";
   static const String pleaseSelectDeliveryDate = "Please select delivery date";
   static const String searchParty = "Search party";
-  static const String editParty = "Edit party";
-  static const String editPartyName = "Edit party name";
-  static const String editPhoneNumber = "Edit phone number";
+  static const String editParty = "Edit Party";
+  static const String editPartyName = "Edit Party Name";
+  static const String editPhoneNumber = "Edit Phone Number";
+  static const String editEmail = "Edit Email";
+  static const String orderNumber = "Order Number";
+  static const String size = "Size";
+  static const String quantity = "Quantity";
+  static const String sleeperPatiya = "Sleeper Patiya: ";
+  static const String ghodiPatiya = "Ghodi Patiya: ";
+  static const String block = "Block: ";
 }

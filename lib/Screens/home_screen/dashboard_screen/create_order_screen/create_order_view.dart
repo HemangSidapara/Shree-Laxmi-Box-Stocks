@@ -65,6 +65,7 @@ class CreateOrderView extends GetView<CreateOrderController> {
                                   duration: const Duration(milliseconds: 300),
                                   child: IconButton(
                                     onPressed: () async {
+                                      Utils.unfocus();
                                       await showBottomSheetPartyEdit();
                                     },
                                     style: IconButton.styleFrom(
@@ -765,6 +766,7 @@ class CreateOrderView extends GetView<CreateOrderController> {
                       ///Back
                       IconButton(
                         onPressed: () {
+                          Utils.unfocus();
                           Get.back();
                         },
                         style: IconButton.styleFrom(
@@ -788,11 +790,13 @@ class CreateOrderView extends GetView<CreateOrderController> {
                       ///Save
                       TextButton(
                         onPressed: () {
+                          Utils.unfocus();
                           Get.back();
                           if (selectedPartyId.value != -1) {
                             controller.selectedPartyId.value = selectedPartyId.value;
                             controller.partyNameController.text = controller.partyList.firstWhere((element) => element.partyId == selectedPartyId.value).partyName ?? "";
                             controller.partyPhoneController.text = controller.partyList.firstWhere((element) => element.partyId == selectedPartyId.value).partyPhone ?? "";
+                            controller.partyEmailController.text = controller.partyList.firstWhere((element) => element.partyId == selectedPartyId.value).partyEmail ?? "";
                           }
                         },
                         style: IconButton.styleFrom(
@@ -858,6 +862,8 @@ class CreateOrderView extends GetView<CreateOrderController> {
                             onTap: () {
                               if (addPartyFormKey.currentState?.validate() == true) {
                                 controller.partyNameController.text = addPartyController.text.trim();
+                                controller.partyPhoneController.clear();
+                                controller.partyEmailController.clear();
                                 controller.selectedPartyId(-1);
                                 Get.back();
                               }
@@ -982,6 +988,7 @@ class CreateOrderView extends GetView<CreateOrderController> {
     GlobalKey<FormState> editPartyFormKey = GlobalKey<FormState>();
     TextEditingController editPartyController = TextEditingController(text: controller.partyNameController.text.trim());
     TextEditingController editPhoneNumberController = TextEditingController(text: controller.partyPhoneController.text.trim());
+    TextEditingController editEmailController = TextEditingController(text: controller.partyEmailController.text.trim());
 
     await showBottomSheetWidget(
       context: Get.context!,
@@ -1006,6 +1013,7 @@ class CreateOrderView extends GetView<CreateOrderController> {
                       children: [
                         IconButton(
                           onPressed: () {
+                            Utils.unfocus();
                             Get.back();
                           },
                           style: IconButton.styleFrom(
@@ -1027,27 +1035,35 @@ class CreateOrderView extends GetView<CreateOrderController> {
                         ),
                         TextButton(
                           onPressed: () async {
+                            Utils.unfocus();
                             if (controller.selectedPartyId.value != -1) {
                               await controller.checkEditParty(
                                 partyId: controller.selectedPartyId.value.toString(),
                                 partyName: editPartyController.text.trim(),
                                 partyPhone: editPhoneNumberController.text.trim(),
+                                partyEmail: editEmailController.text.trim(),
                               );
                             }
                           },
                           style: IconButton.styleFrom(
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
-                          child: controller.isGetPartiesLoading.isTrue
-                              ? LoadingWidget()
-                              : Text(
+                          child: Obx(
+                            () {
+                              if (controller.isGetPartiesLoading.isTrue) {
+                                return LoadingWidget();
+                              } else {
+                                return Text(
                                   AppStrings.save.tr,
                                   style: TextStyle(
                                     color: AppColors.DARK_GREEN_COLOR,
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w700,
                                   ),
-                                ),
+                                );
+                              }
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -1092,6 +1108,18 @@ class CreateOrderView extends GetView<CreateOrderController> {
                             maxLength: 10,
                             keyboardType: TextInputType.number,
                           ),
+
+                          ///Email
+                          TextFieldWidget(
+                            controller: editEmailController,
+                            title: AppStrings.editEmail.tr,
+                            hintText: AppStrings.enterPartyEmail.tr,
+                            validator: controller.validatePartyEmail,
+                            primaryColor: AppColors.SECONDARY_COLOR,
+                            secondaryColor: AppColors.PRIMARY_COLOR,
+                            maxLength: 30,
+                            keyboardType: TextInputType.emailAddress,
+                          ),
                         ],
                       ),
                     ),
@@ -1133,6 +1161,7 @@ class CreateOrderView extends GetView<CreateOrderController> {
                     ),
                     IconButton(
                       onPressed: () {
+                        Utils.unfocus();
                         Get.back();
                       },
                       style: IconButton.styleFrom(

@@ -6,8 +6,10 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shree_laxmi_box_stocks/Constants/app_assets.dart';
 import 'package:shree_laxmi_box_stocks/Constants/app_colors.dart';
 import 'package:shree_laxmi_box_stocks/Constants/app_strings.dart';
+import 'package:shree_laxmi_box_stocks/Constants/app_styles.dart';
 import 'package:shree_laxmi_box_stocks/Constants/app_utils.dart';
 import 'package:shree_laxmi_box_stocks/Screens/home_screen/dashboard_screen/pending_orders_screen/pending_orders_controller.dart';
+import 'package:shree_laxmi_box_stocks/Utils/app_formatter.dart';
 import 'package:shree_laxmi_box_stocks/Widgets/animated_staggredlist_widget.dart';
 import 'package:shree_laxmi_box_stocks/Widgets/custom_header_widget.dart';
 import 'package:shree_laxmi_box_stocks/Widgets/loading_widget.dart';
@@ -130,8 +132,7 @@ class PendingOrdersView extends GetView<PendingOrdersController> {
                                           SizedBox(width: 2.w),
                                           Flexible(
                                             child: Text(
-                                              "",
-                                              // party.partyName ?? '',
+                                              party.partyName ?? '',
                                               style: TextStyle(
                                                 color: AppColors.SECONDARY_COLOR,
                                                 fontSize: 16.sp,
@@ -152,7 +153,9 @@ class PendingOrdersView extends GetView<PendingOrdersController> {
                               trailing: context.isTablet
                                   ? const SizedBox()
                                   : IconButton(
-                                      onPressed: () async {},
+                                      onPressed: () async {
+                                        Utils.unfocus();
+                                      },
                                       style: IconButton.styleFrom(
                                         backgroundColor: AppColors.WARNING_COLOR,
                                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -196,46 +199,47 @@ class PendingOrdersView extends GetView<PendingOrdersController> {
                                         child: FadeInAnimation(child: child),
                                       ),
                                       children: [
-                                        for (int i = 0; i < (party.length); i++) ...[
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 2.w),
-                                            child: Row(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                ///Product Name
-                                                SizedBox(
-                                                  width: 70.w,
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        "✤",
-                                                        style: TextStyle(
-                                                          color: AppColors.BLACK_COLOR,
-                                                          fontSize: 16.sp,
-                                                          fontWeight: FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 2.w),
-                                                      Flexible(
-                                                        child: Text(
-                                                          "",
-                                                          // party.productData?[i].productName ?? "",
+                                        for (int i = 0; i < (party.orders?.length ?? 0); i++) ...[
+                                          if (i == 0 || party.orders?[i - 1].deliveryDate != party.orders?[i].deliveryDate) ...[
+                                            Padding(
+                                              padding: EdgeInsets.only(left: 2.w),
+                                              child: Row(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  ///Delivery Date
+                                                  SizedBox(
+                                                    width: 70.w,
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          "✤",
                                                           style: TextStyle(
                                                             color: AppColors.BLACK_COLOR,
-                                                            fontWeight: FontWeight.w600,
                                                             fontSize: 16.sp,
+                                                            fontWeight: FontWeight.w600,
                                                           ),
                                                         ),
-                                                      ),
-                                                    ],
+                                                        SizedBox(width: 2.w),
+                                                        Flexible(
+                                                          child: Text(
+                                                            party.orders?[i].deliveryDate ?? "",
+                                                            style: TextStyle(
+                                                              color: AppColors.BLACK_COLOR,
+                                                              fontWeight: FontWeight.w600,
+                                                              fontSize: 16.sp,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(height: 2.h),
+                                            SizedBox(height: 2.h),
+                                          ],
 
-                                          ///Orders
+                                          ///Order Details
                                           AnimationLimiter(
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
@@ -246,8 +250,9 @@ class PendingOrdersView extends GetView<PendingOrdersController> {
                                                   child: FadeInAnimation(child: child),
                                                 ),
                                                 children: [
-                                                  for (int j = 0; j < (party[i].length); j++) ...[
-                                                    ExpansionTile(
+                                                  (() {
+                                                    final orderDetails = party.orders?[i];
+                                                    return ExpansionTile(
                                                       title: SizedBox(
                                                         height: context.isTablet
                                                             ? Device.aspectRatio > 0.5
@@ -261,13 +266,24 @@ class PendingOrdersView extends GetView<PendingOrdersController> {
                                                               child: Row(
                                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                                 children: [
-                                                                  ///Date
+                                                                  ///Size
                                                                   Text(
                                                                     "❖",
                                                                     style: TextStyle(
                                                                       fontSize: 16.sp,
                                                                       fontWeight: FontWeight.w600,
                                                                       color: AppColors.SECONDARY_COLOR,
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(width: 2.w),
+                                                                  Flexible(
+                                                                    child: Text(
+                                                                      orderDetails?.boxSize?.getSizeFormatterLB ?? "",
+                                                                      style: TextStyle(
+                                                                        color: AppColors.BLACK_COLOR,
+                                                                        fontWeight: FontWeight.w600,
+                                                                        fontSize: 16.sp,
+                                                                      ),
                                                                     ),
                                                                   ),
                                                                 ],
@@ -283,7 +299,9 @@ class PendingOrdersView extends GetView<PendingOrdersController> {
                                                               children: [
                                                                 ///Create Job
                                                                 IconButton(
-                                                                  onPressed: () async {},
+                                                                  onPressed: () async {
+                                                                    Utils.unfocus();
+                                                                  },
                                                                   style: IconButton.styleFrom(
                                                                     backgroundColor: AppColors.DARK_GREEN_COLOR,
                                                                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -302,7 +320,9 @@ class PendingOrdersView extends GetView<PendingOrdersController> {
 
                                                                 ///Delete
                                                                 IconButton(
-                                                                  onPressed: () async {},
+                                                                  onPressed: () async {
+                                                                    Utils.unfocus();
+                                                                  },
                                                                   style: IconButton.styleFrom(
                                                                     backgroundColor: AppColors.DARK_RED_COLOR,
                                                                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -326,6 +346,7 @@ class PendingOrdersView extends GetView<PendingOrdersController> {
                                                       backgroundColor: AppColors.LIGHT_SECONDARY_COLOR.withValues(alpha: 0.7),
                                                       iconColor: AppColors.SECONDARY_COLOR,
                                                       tilePadding: EdgeInsets.only(left: 4.w, right: 2.w),
+                                                      childrenPadding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 1.h),
                                                       children: [
                                                         Divider(
                                                           color: AppColors.HINT_GREY_COLOR,
@@ -338,20 +359,132 @@ class PendingOrdersView extends GetView<PendingOrdersController> {
                                                           child: AnimationLimiter(
                                                             child: Column(
                                                               crossAxisAlignment: CrossAxisAlignment.start,
+                                                              spacing: 0.5.h,
                                                               children: AnimationConfiguration.toStaggeredList(
                                                                 duration: const Duration(milliseconds: 175),
                                                                 childAnimationBuilder: (child) => ScaleAnimation(
                                                                   child: FadeInAnimation(child: child),
                                                                 ),
-                                                                children: [],
+                                                                children: [
+                                                                  ///Order Number
+                                                                  OrderDetailsWidget(
+                                                                    title: AppStrings.orderNumber,
+                                                                    value: orderDetails?.purchaseOrderNumber ?? "",
+                                                                  ),
+
+                                                                  ///Box Type
+                                                                  OrderDetailsWidget(
+                                                                    title: AppStrings.boxType,
+                                                                    value: orderDetails?.boxType ?? "",
+                                                                  ),
+
+                                                                  ///Box Quantity
+                                                                  OrderDetailsWidget(
+                                                                    title: AppStrings.boxQuantity,
+                                                                    value: orderDetails?.boxQuantity ?? "",
+                                                                  ),
+
+                                                                  ///Way Type
+                                                                  OrderDetailsWidget(
+                                                                    title: AppStrings.wayType,
+                                                                    value: orderDetails?.wayType ?? "",
+                                                                  ),
+
+                                                                  ///Box Purity
+                                                                  OrderDetailsWidget(
+                                                                    title: AppStrings.boxPurityType,
+                                                                    value: orderDetails?.boxPurity ?? "",
+                                                                  ),
+
+                                                                  Divider(
+                                                                    color: AppColors.HINT_GREY_COLOR,
+                                                                    thickness: 1,
+                                                                    height: 2,
+                                                                  ),
+
+                                                                  ///Top Patiya
+                                                                  if (orderDetails?.isTop == "Yes") ...[
+                                                                    Text(
+                                                                      AppStrings.topPatiya.tr,
+                                                                      style: AppStyles.size18W700Style?.copyWith(color: AppColors.SECONDARY_COLOR),
+                                                                    ),
+                                                                    OrderDetailsWidget(
+                                                                      title: AppStrings.size,
+                                                                      value: orderDetails?.topPatiyaSize?.getSizeFormatterLBH ?? "",
+                                                                    ),
+                                                                    OrderDetailsWidget(
+                                                                      title: AppStrings.quantity,
+                                                                      value: orderDetails?.topPatiyaQuantity ?? "",
+                                                                    ),
+                                                                    Divider(
+                                                                      color: AppColors.HINT_GREY_COLOR,
+                                                                      thickness: 1,
+                                                                      height: 2,
+                                                                    ),
+                                                                  ],
+
+                                                                  ///Sleeper Patiya
+                                                                  Text(
+                                                                    AppStrings.sleeperPatiya.tr,
+                                                                    style: AppStyles.size18W700Style?.copyWith(color: AppColors.SECONDARY_COLOR),
+                                                                  ),
+                                                                  OrderDetailsWidget(
+                                                                    title: AppStrings.size,
+                                                                    value: orderDetails?.sleeperPatiyaSize?.getSizeFormatterLBH ?? "",
+                                                                  ),
+                                                                  OrderDetailsWidget(
+                                                                    title: AppStrings.quantity,
+                                                                    value: orderDetails?.sleeperPatiyaQuantity ?? "",
+                                                                  ),
+                                                                  Divider(
+                                                                    color: AppColors.HINT_GREY_COLOR,
+                                                                    thickness: 1,
+                                                                    height: 2,
+                                                                  ),
+
+                                                                  ///Ghodi Patiya
+                                                                  Text(
+                                                                    AppStrings.ghodiPatiya.tr,
+                                                                    style: AppStyles.size18W700Style?.copyWith(color: AppColors.SECONDARY_COLOR),
+                                                                  ),
+                                                                  OrderDetailsWidget(
+                                                                    title: AppStrings.size,
+                                                                    value: orderDetails?.ghodiPatiyaSize?.getSizeFormatterLBH ?? "",
+                                                                  ),
+                                                                  OrderDetailsWidget(
+                                                                    title: AppStrings.quantity,
+                                                                    value: orderDetails?.ghodiPatiyaQuantity ?? "",
+                                                                  ),
+
+                                                                  ///Block
+                                                                  if (orderDetails?.wayType == "4 way") ...[
+                                                                    Divider(
+                                                                      color: AppColors.HINT_GREY_COLOR,
+                                                                      thickness: 1,
+                                                                      height: 2,
+                                                                    ),
+                                                                    Text(
+                                                                      AppStrings.block.tr,
+                                                                      style: AppStyles.size18W700Style?.copyWith(color: AppColors.SECONDARY_COLOR),
+                                                                    ),
+                                                                    OrderDetailsWidget(
+                                                                      title: AppStrings.size,
+                                                                      value: orderDetails?.blockSize?.getSizeFormatterLBH ?? "",
+                                                                    ),
+                                                                    OrderDetailsWidget(
+                                                                      title: AppStrings.quantity,
+                                                                      value: orderDetails?.blockQuantity ?? "",
+                                                                    ),
+                                                                  ],
+                                                                ],
                                                               ),
                                                             ),
                                                           ),
                                                         ),
                                                       ],
-                                                    ),
-                                                    SizedBox(height: 1.h),
-                                                  ]
+                                                    );
+                                                  })(),
+                                                  SizedBox(height: 1.h),
                                                 ],
                                               ),
                                             ),
@@ -380,6 +513,28 @@ class PendingOrdersView extends GetView<PendingOrdersController> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget OrderDetailsWidget({
+    required String title,
+    required String value,
+  }) {
+    return Row(
+      children: [
+        Flexible(
+          child: Text(
+            title.contains(":") ? title.replaceAll(" :", ": ").tr : "${title.tr}: ",
+            style: AppStyles.size15W600Style?.copyWith(color: AppColors.SECONDARY_COLOR),
+          ),
+        ),
+        Flexible(
+          child: Text(
+            value.tr,
+            style: AppStyles.size16W600Style?.copyWith(color: AppColors.SECONDARY_COLOR),
+          ),
+        ),
+      ],
     );
   }
 }

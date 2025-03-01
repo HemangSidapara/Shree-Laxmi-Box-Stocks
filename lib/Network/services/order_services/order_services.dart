@@ -107,11 +107,13 @@ class OrderServices {
     required String partyId,
     required String partyName,
     required String partyPhone,
+    required String partyEmail,
   }) async {
     final params = {
       ApiKeys.partyId: partyId,
       ApiKeys.partyName: partyName,
       ApiKeys.partyPhone: partyPhone,
+      ApiKeys.partyEmail: partyEmail,
     };
     final response = await ApiBaseHelper.postHTTP(
       ApiUrls.editPartyApi,

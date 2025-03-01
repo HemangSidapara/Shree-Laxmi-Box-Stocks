@@ -159,6 +159,7 @@ class CreateOrderController extends GetxController {
     required String partyId,
     required String partyName,
     required String partyPhone,
+    required String partyEmail,
   }) async {
     try {
       isGetPartiesLoading(true);
@@ -166,12 +167,15 @@ class CreateOrderController extends GetxController {
         partyId: partyId,
         partyName: partyName,
         partyPhone: partyPhone,
+        partyEmail: partyEmail,
       );
 
       if (response.isSuccess) {
         await getPartiesApi();
-        partyNameController.text = partyName;
-        partyPhoneController.text = partyPhone;
+        final getParty = partyList.firstWhere((element) => element.partyId.toString() == partyId);
+        partyNameController.text = getParty.partyName ?? "";
+        partyPhoneController.text = getParty.partyPhone ?? "";
+        partyEmailController.text = getParty.partyEmail ?? "";
         Get.back();
         Utils.handleMessage(message: response.message);
       }

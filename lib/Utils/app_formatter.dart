@@ -86,3 +86,11 @@ extension NotContainsAndAddSubString on String {
     }
   }
 }
+
+extension GetSizeFormatter on String {
+  /// Format: 10X10 -> 10 L ⨯ 10 B
+  String get getSizeFormatterLB => "${split("X").first} L ⨯ ${split("X").last} B";
+
+  /// Format: 10X10X10 -> 10 L ⨯ 10 B ⨯ 10 H
+  String get getSizeFormatterLBH => "${split("X").first} L ⨯ ${split("X")[1]} B ⨯ ${split("X").last} H";
+}
